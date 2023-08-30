@@ -1,21 +1,51 @@
-import {io} from "socket.io-client";
+import { io } from "socket.io-client";
 
-const ENDPOINT = 'http://localhost:3001';
-const socket = io(ENDPOINT);
+class SocketService {
+  constructor() {
+    this.ENDPOINT = 'http://localhost:3001';
+    this.socket = io(this.ENDPOINT, { autoConnect: false });
+    this.handleInvalidUsername = null;
 
-const connect = (roomId, username) => {
-  if (roomId && username) {
-    socket.emit('JOIN_ROOM', {roomId, username});
+    this._initSocketListeners();
   }
-}
 
-const createRoom = (roomId, username) => {
-  if (roomId && username) {
-    socket.emit('CREATE_ROOM', {roomId, username});
+  _initSocketListeners() {
+    // catch all listener for debugging
+    this.socket.onAny((event, ...args) => {
+      console.log(event, args);
+    });
+
+    // handle connection errors from server
+    this.socket.on("connect_error", (err) => {
+      if (err.message === "USR_TAKEN") {
+        if (this.handleInvalidUsername) {
+          this.handleInvalidUsername();
+        }
+      }
+    });
   }
+
+  onInvalidUsername(cb) {
+    this.handleInvalidUsername = cb;
+  }
+
+  connectServer(username) {
+    this.socket.auth = { username };
+    this.socket.connect();
+  }
+
+  joinRoomReq(roomId, username) {
+    if (!this.socket.connected) {
+      this.connectServer(username);
+    }
+  }
+
+  createRoom(roomId, username) {
+    if (roomId && username) {
+      this.socket.emit('CREATE_ROOM', { roomId, username });
+    }
+  }
+
 }
 
-export {
-  connect,
-  createRoom
-}
+export const socketService = new SocketService();
