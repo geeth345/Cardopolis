@@ -11,6 +11,18 @@ const io = socketIo(server, {
     }
 });
 
+
+// middleware for username validation
+io.use((socket, next) => {
+   const username = socket.handshake.auth.username;
+   if (!username) {
+      return next(new Error("USR_INVALID"));
+   }
+   socket.username = username;
+   next();
+});
+
+
 io.on('connection', (socket) => {
    console.log('New client connected');
 
@@ -24,6 +36,9 @@ io.on('connection', (socket) => {
       console.log(data);
    });
 
+   // emit successfully connection event to client
+   socket.emit("connect_success");
+   console.log("Emitted connect_success event");
 });
 
 const port = 3001;
