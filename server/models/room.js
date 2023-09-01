@@ -20,7 +20,7 @@ export class Room {
 
   addUser(userId) {
     this.users.push(userId);
-    userList.getUser(userId).getSocket().join(this.id);
+    userList.getUser(userId).joinRoom(this.id);
   }
 
   removeUser(userId) {
@@ -30,7 +30,7 @@ export class Room {
     } else {
       this.host = null;
     }
-    userList.getUser(userId).getSocket().leave(this.id);
+    userList.getUser(userId).leaveRoom();
   }
 
   numUsers() {

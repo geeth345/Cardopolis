@@ -10,10 +10,12 @@ export class User {
 
   joinRoom(roomId) {
     this.roomId = roomId;
+    this.socket.join(roomId);
   }
 
   leaveRoom() {
     this.roomId = null;
+    this.socket.leave(this.roomId);
   }
 
   getSocket() {
