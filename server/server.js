@@ -12,12 +12,12 @@ const io = socketIo(server, {
    }
 });
 
-// import handlers
+// socket event handlers
 import {chatHandler} from "./socketHandler/chatHandler";
 import {gameHandler} from "./socketHandler/gameHandler";
 import {roomHandler} from "./socketHandler/roomHandler";
 
-// import models
+// user models
 import {User} from "./models/user";
 import {userList} from "./models/userList";
 
@@ -44,21 +44,23 @@ io.use((socket, next) => {
 
 // socket.io event listeners
 io.on('connection', (socket) => {
-  console.log('New client connected');
 
-  socket.userId = crypto.randomUUID();
-  userList.addUser(socket.userId, new User(socket));
-  socket.emit("connect_success");
-
-  socket.on('disconnect', () => {
-    // TODO: implement disconnect logic
-  });
-
-  // Delegate to handlers
+  // set up handlers for app events
   chatHandler(socket, io);
   gameHandler(socket, io);
   roomHandler(socket, io);
 
+  // disconnect handler
+  socket.on('disconnect', () => {
+    // TODO: implement disconnect logic
+  });
+
+  // set up user
+  socket.userId = crypto.randomUUID();
+  userList.addUser(socket.userId, new User(socket));
+
+  // send success message to client
+  socket.emit("connect_success");
 
 });
 
