@@ -19,4 +19,6 @@ class UserList {
 
 }
 
-export const userList = new UserList();
+const userList = new UserList();
+
+module.exports = userList;

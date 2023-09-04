@@ -13,18 +13,19 @@ const io = socketIo(server, {
 });
 
 // socket event handlers
-import {chatHandler} from "./socketHandler/chatHandler";
-import {gameHandler} from "./socketHandler/gameHandler";
-import {roomHandler} from "./socketHandler/roomHandler";
+const chatHandler = require("./socketHandlers/chatHandler.js");
+const gameHandler = require("./socketHandlers/gameHandler.js");
+const roomHandler = require("./socketHandlers/roomHandler.js");
 
 // user models
-import {User} from "./models/user";
-import {userList} from "./models/userList";
+const User = require("./models/user");
+const userList = require("./models/userList");
 
 
 // start server
 const port = 3001;
 server.listen(port, () => console.log(`Listening on port ${port}`));
+
 
 
 // middleware for user validation
@@ -34,6 +35,7 @@ io.use((socket, next) => {
 
   // new sessions (client sends username)
   const username = socket.handshake.auth.username;
+  console.log("Connection attempt from " + username);
   if (!username) {
     return next(new Error("USR_INVALID"));
   }
@@ -41,9 +43,13 @@ io.use((socket, next) => {
   next();
 });
 
-
 // socket.io event listeners
 io.on('connection', (socket) => {
+
+  // catch all listener for debugging
+  socket.onAny((event, ...args) => {
+    console.log(event, args);
+  });
 
   // set up handlers for app events
   chatHandler(socket, io);

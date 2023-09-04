@@ -7,6 +7,8 @@ class SocketService {
 
     this.handleInvalidUsername = null;
     this.handleConnectionSuccess = null;
+    this.handleRoomListUpdate = null;
+    this.handleRoomOpSuccess = null;
 
     this._initSocketListeners();
   }
@@ -31,6 +33,19 @@ class SocketService {
     this.socket.on("connect_success", () => {
       this.handleConnectionSuccess();
     });
+
+    // room list update
+    this.socket.on("ROOM_LIST", (roomList) => {
+      this.handleRoomListUpdate(roomList);
+    });
+
+    // room create / join
+    this.socket.on("ROOM_OP_SUCCESS", (roomId) => {
+      this.handleRoomOpSuccess(roomId);
+    });
+    this.socket.on("ROOM_OP_FAIL", (err) => {
+      this.handleRoomOpFail(err);
+    });
   }
 
 
@@ -43,6 +58,18 @@ class SocketService {
     this.handleConnectionSuccess = cb;
   }
 
+// room joining / creating
+  onRoomListUpdate(cb) {
+    this.handleRoomListUpdate = cb;
+  }
+  onRoomOpSuccess(cb) {
+    this.handleRoomOpSuccess = cb;
+  }
+  onRoomOpFail(cb) {
+    this.handleRoomOpFail = cb;
+  }
+
+
 
   // ########## emit events ###############
 
@@ -50,14 +77,23 @@ class SocketService {
     this.socket.auth = { username };
     this.socket.connect();
   }
-
-  joinRoomReq(roomId, username) {
-
+  isConnected() {
+    return this.socket.connected;
   }
 
-  createRoom(roomId, username) {
-
+  // room operations
+  requestRoomList() {
+    this.socket.emit("ROOM_LIST");
   }
+  joinRoomRequest(roomId) {
+    this.socket.emit("JOIN_ROOM", roomId);
+  }
+  createRoomRequest(roomName, capacity) {
+    console.log(roomName, capacity);
+    const req = JSON.stringify({ name: roomName, maxPlayers: capacity } );
+    this.socket.emit("CREATE_ROOM", req);
+  }
+
 
 }
 

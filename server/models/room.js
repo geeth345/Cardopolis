@@ -1,6 +1,6 @@
-import { userList } from "./userList";
+const userList = require("./userList");
 
-export class Room {
+class Room {
 
   id;
   users= [];
@@ -13,12 +13,11 @@ export class Room {
     this.name = name;
     this.capacity = capacity;
     this.host = host;
-
     this.users.push(host);
 
   }
 
-  addUser(userId) {
+  newUser(userId) {
     this.users.push(userId);
     userList.getUser(userId).joinRoom(this.id);
   }
@@ -38,14 +37,29 @@ export class Room {
   }
 
   getRoomInfo() {
+    const host = userList.getUser(this.host);
+    let hostName = null;
+    if (host) {
+       hostName = host.getUsername();
+    }
+
     return {
       id: this.id,
       name: this.name,
       capacity: this.capacity,
       numUsers: this.users.length,
-      host: this.host
+      host: hostName,
     }
   }
 
+  isFull() {
+    return this.users.length >= this.capacity;
+  }
+
+  hasUser(userId) {
+    return this.users.includes(userId);
+  }
 
 }
+
+module.exports = Room;

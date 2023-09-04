@@ -1,4 +1,4 @@
-export class User {
+class User {
 
   socket;
   roomId;
@@ -18,8 +18,10 @@ export class User {
     this.socket.leave(this.roomId);
   }
 
-  getSocket() {
-    return this.socket;
+  getUsername() {
+    return this.socket.username;
   }
 
 }
+
+module.exports = User;
