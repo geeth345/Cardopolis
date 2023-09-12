@@ -1,5 +1,5 @@
-const roomList = require("../models/roomList");
-const Room = require("../models/room");
+import roomList from "../models/roomList";
+import Room from "../models/room";
 const generateId = require("../utils");
 
 function roomHandler(socket, io) {

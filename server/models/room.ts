@@ -1,12 +1,15 @@
-const userList = require("./userList");
+import User from "./user";
+import Entity from "./entity";
+import userList from "./userList";
 
 class Room {
 
-  id;
-  users= [];
-  name;
-  capacity;
-  host;
+  id: string;
+  users: string[];
+  name: string;
+  capacity: number;
+  host: string;
+  entities: Entity[];
 
   constructor(id, name, host, capacity) {
     this.id = id;
@@ -23,7 +26,7 @@ class Room {
   }
 
   removeUser(userId) {
-    this.users = this.users.filter(user => user.id !== userId);
+    this.users = this.users.filter((user) => user !== userId);
     if (this.users.length > 0) {
       this.host = this.users[0];
     } else {
@@ -62,4 +65,4 @@ class Room {
 
 }
 
-module.exports = Room;
+export default Room;

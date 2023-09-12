@@ -1,6 +1,9 @@
-const Room = require('./room');
+import Room from './room.js';
 
 class RoomList {
+
+  rooms: Map<string, Room>;
+
   constructor() {
     // rooms stores in a map with roomId as key and room object as value
     this.rooms = new Map();
@@ -25,7 +28,7 @@ class RoomList {
     if (!this.rooms.has(roomId)) {
       return false;
     }
-    if (this.rooms.get(roomId).numPlayers() > 0) {
+    if (this.rooms.get(roomId).numUsers() > 0) {
       return false;
     }
     this.rooms.delete(roomId);
@@ -50,4 +53,4 @@ class RoomList {
 
 const roomList = new RoomList();
 
-module.exports = roomList;
+export default roomList;

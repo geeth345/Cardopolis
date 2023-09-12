@@ -1,4 +1,7 @@
 class UserList {
+
+  users: Map<string, any>;
+
   constructor() {
     // stores users in a map
     this.users = new Map();
@@ -21,4 +24,4 @@ class UserList {
 
 const userList = new UserList();
 
-module.exports = userList;
+export default userList;
