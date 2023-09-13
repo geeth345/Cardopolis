@@ -11,7 +11,7 @@ properties, as well as the current updateId.
 ### UPDATE
 An update event is sent when there is a change to the game state that should be reflected in the 
 game screen (e.g. another player plays a card). The update event will contain a JSON object that 
-contains the entity that was updated, its updated state, and the new updateId.
+contains what was updated. (Create entity / remove entity / update entity). Includes the orignal state, new state, and the updatedId to ensure synchronisation.
 
 ### UPDATE_SUCCESS
 ### UPDATE_FAIL

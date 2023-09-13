@@ -10,7 +10,7 @@ import roomHandler from "./socketHandlers/roomHandler";
 
 // user models
 import User from "./models/user";
-import userList from "./models/userList";
+import userList from "./state/userList";
 
 
 // defining event types
@@ -24,16 +24,16 @@ interface ClientToServerEvents {
   ROOM_LIST: () => void;
   JOIN_ROOM: (roomId: string) => void;
   CREATE_ROOM: (roomInfo: string) => void;
+  UPDATE: (update: string) => void;
 }
 interface SocketData {
   username: string;
   userId: string;
+  roomId: string;
 }
 
 
-
-
-// initialising server
+// initialisin and start server
 const app = express();
 const server = createServer(app);
 const io = new Server<ClientToServerEvents, ServerToClientEvents, SocketData>(server, {
@@ -41,13 +41,6 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents, SocketData>(se
       origin: '*'
    }
 });
-
-
-
-
-
-
-// start server
 const port = 3001;
 server.listen(port, () => console.log(`Listening on port ${port}`));
 

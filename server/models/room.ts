@@ -1,15 +1,15 @@
-import User from "./user";
-import Entity from "./entity";
 import userList from "./userList";
+import Game from "./game";
 
 class Room {
 
+  // room properties
   id: string;
   users: string[] = [];
   name: string;
   capacity: number;
   host: string;
-  entities: Entity[];
+  gameState: Game;
 
   constructor(id, name, host, capacity) {
     this.id = id;
@@ -17,7 +17,7 @@ class Room {
     this.capacity = capacity;
     this.host = host;
     this.users.push(host);
-
+    this.gameState = new Game(id);
   }
 
   newUser(userId) {
@@ -53,6 +53,10 @@ class Room {
       numUsers: this.users.length,
       host: hostName,
     }
+  }
+
+  getGame() {
+    return this.gameState;
   }
 
   isFull() {

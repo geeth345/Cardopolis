@@ -1,28 +1,27 @@
 class User {
 
   socket;
-  roomId;
 
   constructor(socket) {
-    this.socket = socket
-    this.roomId = null;
+    this.socket = socket;
+    this.socket.data.roomId = null;
   }
 
   /**
-   * Updates the roomId value in the User object, and joins the socket.io room, with the name being the roomId.
+   * Updates the roomId value in the socket data, and joins the socket.io room, with the name being the roomId.
    * @param {string} roomId
    */
   joinRoom(roomId) {
-    this.roomId = roomId;
+    this.socket.data.roomId = roomId;
     this.socket.join(roomId);
   }
 
   /**
-   * Updates the roomId value in the User object to null, and leaves the socket.io room
+   * Updates the roomId value in the socket data to null, and leaves the socket.io room
    */
   leaveRoom() {
-    this.roomId = null;
-    this.socket.leave(this.roomId);
+    this.socket.leave(this.socket.data.roomId);
+    this.socket.data.roomId = null;
   }
 
   getUsername() {
