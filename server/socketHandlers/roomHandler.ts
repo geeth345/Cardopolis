@@ -1,10 +1,11 @@
 import roomList from "../models/roomList";
 import Room from "../models/room";
-const generateId = require("../utils");
+import { generateId } from "../utils";
+import {Socket} from "socket.io";
 
-function roomHandler(socket, io) {
+function roomHandler(socket: Socket) {
 
-  socket.on('ROOM_LIST', (data) => {
+  socket.on('ROOM_LIST', () => {
     const roominfo = roomList.getRoomListJSON();
     socket.emit('ROOM_LIST', roominfo);
   });
@@ -18,11 +19,11 @@ function roomHandler(socket, io) {
       sendFail(socket, 'Room is full');
       return;
     }
-    if (roomList.getRoom(roomId).hasUser(socket.userId)) {
+    if (roomList.getRoom(roomId).hasUser(socket.data.userId)) {
       sendFail(socket, 'Already in room');
       return;
     }
-    roomList.getRoom(roomId).newUser(socket.userId);
+    roomList.getRoom(roomId).newUser(socket.data.userId);
     sendSuccess(socket, roomId);
   });
 
@@ -36,7 +37,7 @@ function roomHandler(socket, io) {
     }
 
     const roomId = generateId(8);
-    const success = roomList.addRoom(roomId, new Room(roomId, req.name, socket.userId, req.maxPlayers));
+    const success = roomList.addRoom(roomId, new Room(roomId, req.name, socket.data.userId, req.maxPlayers));
 
     if (success) {
       sendSuccess(socket, roomId);
@@ -47,12 +48,12 @@ function roomHandler(socket, io) {
 
 }
 
-function sendSuccess(socket, roomId) {
+function sendSuccess(socket: Socket, roomId: string) {
   socket.emit('ROOM_OP_SUCCESS', roomId);
 }
 
-function sendFail(socket, err) {
+function sendFail(socket: Socket, err: string) {
   socket.emit('ROOM_OP_FAIL', err);
 }
 
-module.exports = roomHandler;
+export default roomHandler;

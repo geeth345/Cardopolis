@@ -5,7 +5,7 @@ import userList from "./userList";
 class Room {
 
   id: string;
-  users: string[];
+  users: string[] = [];
   name: string;
   capacity: number;
   host: string;

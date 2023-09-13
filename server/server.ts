@@ -1,25 +1,50 @@
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-const cors = require('cors');
-const crypto = require('crypto');
+import express from "express";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import crypto from 'crypto';
 
+// socket event handlers
+import chatHandler from "./socketHandlers/chatHandler";
+import gameHandler from "./socketHandlers/gameHandler";
+import roomHandler from "./socketHandlers/roomHandler";
+
+// user models
+import User from "./models/user";
+import userList from "./models/userList";
+
+
+// defining event types
+interface ServerToClientEvents {
+  connect_success: () => void;
+  ROOM_LIST: (roomList: string) => void;
+  ROOM_OP_SUCCESS: (roomId: string) => void;
+  ROOM_OP_FAIL: (err_msg: string) => void;
+}
+interface ClientToServerEvents {
+  ROOM_LIST: () => void;
+  JOIN_ROOM: (roomId: string) => void;
+  CREATE_ROOM: (roomInfo: string) => void;
+}
+interface SocketData {
+  username: string;
+  userId: string;
+}
+
+
+
+
+// initialising server
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server, {
+const server = createServer(app);
+const io = new Server<ClientToServerEvents, ServerToClientEvents, SocketData>(server, {
    cors: {
       origin: '*'
    }
 });
 
-// socket event handlers
-const chatHandler = require("./socketHandlers/chatHandler.js");
-const gameHandler = require("./socketHandlers/gameHandler.js");
-const roomHandler = require("./socketHandlers/roomHandler.js");
 
-// user models
-const User = require("./models/user");
-const userList = require("./models/userList");
+
+
 
 
 // start server
@@ -39,7 +64,7 @@ io.use((socket, next) => {
   if (!username) {
     return next(new Error("USR_INVALID"));
   }
-  socket.username = username;
+  socket.data.username = username;
   next();
 });
 
@@ -52,9 +77,9 @@ io.on('connection', (socket) => {
   });
 
   // set up handlers for app events
-  chatHandler(socket, io);
-  gameHandler(socket, io);
-  roomHandler(socket, io);
+  chatHandler(socket);
+  gameHandler(socket);
+  roomHandler(socket);
 
   // disconnect handler
   socket.on('disconnect', () => {
@@ -62,8 +87,8 @@ io.on('connection', (socket) => {
   });
 
   // set up user
-  socket.userId = crypto.randomUUID();
-  userList.addUser(socket.userId, new User(socket));
+  socket.data.userId = crypto.randomUUID();
+  userList.addUser(socket.data.userId, new User(socket));
 
   // send success message to client
   socket.emit("connect_success");

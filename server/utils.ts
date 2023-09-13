@@ -7,4 +7,6 @@ function generateId(length) {
   return id;
 }
 
-module.exports = generateId;
+export {
+  generateId
+}
