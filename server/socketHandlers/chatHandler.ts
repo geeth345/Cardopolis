@@ -1,4 +1,4 @@
-function chatHandler(socket) {
+function chatHandler(socket, io) {
 
 }
 

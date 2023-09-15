@@ -1,5 +1,6 @@
-import userList from "./userList";
+import userList from "../state/userList";
 import Game from "./game";
+import roomList from "../state/roomList";
 
 class Room {
 
@@ -26,13 +27,13 @@ class Room {
   }
 
   removeUser(userId) {
+    userList.getUser(userId).leaveRoom();
     this.users = this.users.filter((user) => user !== userId);
     if (this.users.length > 0) {
       this.host = this.users[0];
     } else {
-      this.host = null;
+      roomList.removeRoom(this.id);
     }
-    userList.getUser(userId).leaveRoom();
   }
 
   numUsers() {

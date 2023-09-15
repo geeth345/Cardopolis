@@ -1,4 +1,4 @@
-import Room from './room';
+import Room from '../models/room';
 
 class RoomList {
 
@@ -16,7 +16,7 @@ class RoomList {
 
   }
 
-  addRoom(roomId, room) {
+  addRoom(roomId, room) : boolean {
     if (this.rooms.has(roomId)) {
       return false;
     }
@@ -24,25 +24,30 @@ class RoomList {
     return true;
   }
 
-  removeRoom(roomId) {
-    if (!this.rooms.has(roomId)) {
+  removeRoom(roomId) : boolean {
+    let room = this.rooms.get(roomId);
+    if (!room) {
       return false;
     }
-    if (this.rooms.get(roomId).numUsers() > 0) {
+    if (room.numUsers() > 0) {
       return false;
     }
     this.rooms.delete(roomId);
+    return true;
   }
 
-  getRoom(roomId) {
-    if (!this.rooms.has(roomId)) {
-      return null;
+  getRoom(roomId): Room | null {
+    let room = this.rooms.get(roomId);
+    if (room) {
+        return room;
+    } else {
+        return null;
     }
-    return this.rooms.get(roomId);
   }
 
   getRoomListJSON() {
-    const rs = [];
+    // TODO: don't use any type
+    const rs : any = [];
     for (const [_, room] of this.rooms) {
       rs.push(room.getRoomInfo());
     }

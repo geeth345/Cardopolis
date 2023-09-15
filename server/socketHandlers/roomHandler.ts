@@ -1,4 +1,4 @@
-import roomList from "../models/roomList";
+import roomList from "../state/roomList";
 import Room from "../models/room";
 import { generateId } from "../utils";
 import {Socket} from "socket.io";
@@ -11,19 +11,20 @@ function roomHandler(socket: Socket) {
   });
 
   socket.on('JOIN_ROOM', (roomId) => {
-    if (!roomList.getRoom(roomId)) {
+    let room = roomList.getRoom(roomId);
+    if (!room) {
       sendFail(socket, 'Room does not exist');
       return;
     }
-    if (roomList.getRoom(roomId).isFull()) {
+    if (room.isFull()) {
       sendFail(socket, 'Room is full');
       return;
     }
-    if (roomList.getRoom(roomId).hasUser(socket.data.userId)) {
+    if (room.hasUser(socket.data.userId)) {
       sendFail(socket, 'Already in room');
       return;
     }
-    roomList.getRoom(roomId).newUser(socket.data.userId);
+    room.newUser(socket.data.userId);
     sendSuccess(socket, roomId);
   });
 

@@ -11,6 +11,7 @@ import roomHandler from "./socketHandlers/roomHandler";
 // user models
 import User from "./models/user";
 import userList from "./state/userList";
+import {Update} from "./interfaces/update.interface";
 
 
 // defining event types
@@ -24,7 +25,7 @@ interface ClientToServerEvents {
   ROOM_LIST: () => void;
   JOIN_ROOM: (roomId: string) => void;
   CREATE_ROOM: (roomInfo: string) => void;
-  UPDATE: (update: string) => void;
+  UPDATE: (update: Update) => void;
 }
 interface SocketData {
   username: string;
@@ -70,8 +71,8 @@ io.on('connection', (socket) => {
   });
 
   // set up handlers for app events
-  chatHandler(socket);
-  gameHandler(socket);
+  chatHandler(socket, io);
+  gameHandler(socket, io);
   roomHandler(socket);
 
   // disconnect handler
