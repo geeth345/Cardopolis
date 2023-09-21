@@ -1,0 +1,15 @@
+.mainArea {
+    position: relative;
+    width: 100%;
+    padding-bottom: 50%;
+    border: black 1px solid;
+}
+
+.card {
+    position: absolute;
+    touch-action: none;
+    width: 10%;
+    height: 10%;
+    border: 1px solid black;
+    background: tomato;
+}

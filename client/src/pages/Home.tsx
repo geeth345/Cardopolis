@@ -1,11 +1,12 @@
 import {Button, Heading, Input, useToast} from "@chakra-ui/react";
-import {socketService as ss} from "../services/socketService.js";
+import {socketService as ss} from "../services/socketService";
 import {useEffect, useState} from "react";
-import {RoomTable} from "../components/roomTable.jsx";
+import {RoomTable} from "../components/roomTable";
 
 export default Home;
 
-function Home({user, setUser, userSelected, setPage}) {
+// eslint-disable-next-line react/prop-types
+function Home({user, setUser, setPage}) {
 
   const [menu, setMenu] = useState("Login");
 
@@ -14,7 +15,7 @@ function Home({user, setUser, userSelected, setPage}) {
   return (
     <div>
       <div className="background"></div>
-      { menu === "Login" && <LoginMenu {...{user, setUser, userSelected, setPage}} setMenu={setMenu}/> }
+      { menu === "Login" && <LoginMenu {...{user, setUser, setPage}} setMenu={setMenu}/> }
       { menu === "CreateRoom" && <CreateRoomMenu user={user} setMenu={setMenu} setPage={setPage}/> }
       { menu === "JoinRoom" && <JoinRoomMenu user={user} setMenu={setMenu} setPage={setPage}/> }
     </div>
@@ -23,7 +24,7 @@ function Home({user, setUser, userSelected, setPage}) {
 
 // the login menu, displayed when the user first opens the page. incl. a username field and buttons
 // to join or create a room
-function LoginMenu({user, setUser, userSelected, setPage, setMenu}) {
+function LoginMenu({user, setUser, setPage, setMenu}) {
 
   const toast = useToast();
   useEffect(() => {
